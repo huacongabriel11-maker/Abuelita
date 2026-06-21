@@ -5,354 +5,163 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Feliz Cumpleaños Abuelita</title>
     <style>
-        /* --- ARQUITECTURA CSS BASE --- */
+        /* --- VARIABLES DE DISEÑO (Arquitectura CSS) --- */
         :root {
             --primary-color: #ff69b4;
             --primary-glow: rgba(255, 105, 180, 0.8);
             --bg-color: #02000a;
+            --text-color: #ffd1dc;
         }
 
+        /* --- RESET Y ESTILO BASE --- */
         body, html { 
-            margin: 0; padding: 0; 
-            width: 100%; height: 100%; 
-            background-color: var(--bg-color); 
-            color: white; 
-            font-family: 'Arial', sans-serif; 
-            overflow: hidden; 
-            touch-action: manipulation; 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            background-color: var(--bg-color); color: white; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            overflow: hidden; touch-action: manipulation; 
         }
 
+        /* --- CAPA 3D (CANVAS) --- */
         #canvas-container { 
             position: absolute; top: 0; left: 0; 
             width: 100%; height: 100%; z-index: 1; 
         }
         
-        /* --- PANTALLAS Y CONTENEDORES --- */
+        /* --- PANTALLAS DE INTERFAZ --- */
         .screen { 
             position: absolute; top: 50%; left: 50%; 
-            transform: translate(-50%, -50%); 
-            z-index: 3; text-align: center; 
-            width: 90%; max-width: 500px;
-            max-height: 90vh; 
+            transform: translate(-50%, -50%); z-index: 3; 
+            text-align: center; width: 90%; max-width: 500px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+            transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1); 
         }
 
-        #main-content {
-            display: none; opacity: 0;
-            pointer-events: none; 
-        }
+        #main-content { display: none; opacity: 0; pointer-events: none; }
+        #main-content.active { pointer-events: auto; }
 
-        #main-content.active {
-            pointer-events: auto;
-        }
-
-        /* --- TIPOGRAFÍA OPTIMIZADA --- */
+        /* --- TIPOGRAFÍA Y MENSAJES --- */
         h1.intro-title { 
-            font-size: clamp(2rem, 8vw, 3.5rem); 
+            font-size: clamp(2.5rem, 10vw, 4rem); 
             text-shadow: 0 0 20px var(--primary-color), 0 0 40px #ff1493; 
-            margin-bottom: 30px; 
-            animation: glow 2.5s infinite alternate; 
-            line-height: 1.2;
-            margin-top: 0;
-        }
-        
-        h1.main-title { 
-            font-size: clamp(1.5rem, 5vw, 2rem); 
-            text-shadow: 0 0 15px var(--primary-color); 
-            margin-bottom: 15px; 
+            margin-bottom: 20px; animation: glow 2s infinite alternate; 
         }
 
         .message-text {
-            background: rgba(0, 0, 0, 0.45); 
-            padding: 10px 15px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 105, 180, 0.2);
-            backdrop-filter: blur(4px); 
-            margin-bottom: 20px;
-            width: 100%;
-            box-sizing: border-box;
+            background: rgba(0, 0, 0, 0.5); 
+            padding: 20px; border-radius: 20px;
+            border: 1px solid rgba(255, 105, 180, 0.3);
+            backdrop-filter: blur(8px);
+            margin-bottom: 25px; min-height: 150px;
         }
 
-        .message-text p { 
-            font-size: clamp(0.95rem, 3.5vw, 1.1rem); 
-            letter-spacing: 0.3px; line-height: 1.5;
-            margin: 0 0 12px 0; color: #ffd1dc;
-            text-shadow: 0 2px 4px rgba(0,0,0,1);
+        #typed-message { 
+            font-size: 1.1rem; line-height: 1.6; color: var(--text-color);
+            text-align: left;
         }
-        .message-text p:last-child { margin-bottom: 0; }
 
-        /* --- UI ELEMENTS --- */
-        button { 
-            background: rgba(255, 105, 180, 0.15); 
-            border: 2px solid var(--primary-color); 
-            color: var(--primary-color); 
-            padding: 14px 32px; 
-            border-radius: 40px; 
-            font-size: 1.1rem; font-weight: bold;
-            cursor: pointer; transition: all 0.3s ease; 
-            box-shadow: 0 0 15px rgba(255,105,180,0.4); 
-            -webkit-tap-highlight-color: transparent; 
-            outline: none;
-        }
-        button:active { transform: scale(0.95); }
-
-        .pulse-btn { animation: pulse 2s infinite; }
-
+        /* --- FOTO Y DECORACIÓN --- */
         .foto-abuelita {
-            display: block; 
-            width: clamp(120px, 40vw, 160px); 
-            height: clamp(120px, 40vw, 160px); 
-            object-fit: cover; 
-            border-radius: 50%; 
-            border: 3px solid var(--primary-color); 
-            box-shadow: 0 0 25px var(--primary-glow);
-            animation: floatFoto 5s ease-in-out infinite; 
-            margin-bottom: 15px;
-            background-color: rgba(255,105,180,0.2); 
+            width: 150px; height: 150px; object-fit: cover;
+            border-radius: 50%; border: 4px solid var(--primary-color);
+            box-shadow: 0 0 30px var(--primary-glow);
+            margin-bottom: 20px; animation: pulse-shadow 3s infinite;
         }
 
-        /* --- DECORACIONES CSS --- */
-        .decorations {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 2;
-            transition: opacity 1.5s ease;
+        button { 
+            background: rgba(255, 105, 180, 0.2); border: 2px solid var(--primary-color);
+            color: var(--primary-color); padding: 15px 40px; border-radius: 50px;
+            font-size: 1.2rem; font-weight: bold; cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
         }
-        .heart {
-            position: absolute; color: var(--primary-color);
-            opacity: 0; animation: floatUp 7s linear infinite;
-        }
-        .heart:nth-child(1) { left: 15%; animation-delay: 0s; font-size: 2rem; }
-        .heart:nth-child(2) { left: 35%; animation-delay: 2s; font-size: 1.2rem; }
-        .heart:nth-child(3) { left: 55%; animation-delay: 4s; font-size: 2.2rem; }
-        .heart:nth-child(4) { left: 75%; animation-delay: 1.5s; font-size: 1.5rem; }
-        .heart:nth-child(5) { left: 85%; animation-delay: 3.5s; font-size: 1.8rem; }
+        button:hover { background: var(--primary-color); color: white; }
 
         /* --- ANIMACIONES --- */
-        @keyframes glow {
-            from { text-shadow: 0 0 10px var(--primary-color); }
-            to { text-shadow: 0 0 25px var(--primary-color), 0 0 40px #ff00ff; }
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 15px rgba(255,105,180,0.4); }
-            50% { transform: scale(1.05); box-shadow: 0 0 25px rgba(255,105,180,0.8); }
-            100% { transform: scale(1); box-shadow: 0 0 15px rgba(255,105,180,0.4); }
-        }
-        @keyframes floatFoto {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-12px); }
-        }
-        @keyframes floatUp {
-            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
-            10% { opacity: 1; text-shadow: 0 0 10px var(--primary-color); }
-            90% { opacity: 1; }
-            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; text-shadow: 0 0 20px var(--primary-color); }
-        }
+        @keyframes glow { from { text-shadow: 0 0 10px var(--primary-color); } to { text-shadow: 0 0 30px #ff00ff; } }
+        @keyframes pulse-shadow { 0%, 100% { box-shadow: 0 0 15px var(--primary-glow); } 50% { box-shadow: 0 0 35px var(--primary-glow); } }
     </style>
 </head>
 <body>
-    <div id="canvas-container"></div>
 
-    <div class="decorations" id="decorations">
-        <div class="heart">💖</div><div class="heart">✨</div><div class="heart">💖</div><div class="heart">💓</div><div class="heart">✨</div>
-    </div>
+    <div id="canvas-container"></div>
 
     <div id="intro-screen" class="screen">
         <h1 class="intro-title">¡FELIZ<br>CUMPLEAÑOS!</h1>
-        <button id="btn-entrar" class="pulse-btn">Entrar ✨</button>
+        <button id="btn-entrar" class="pulse-btn">Entrar a tu sorpresa ✨</button>
     </div>
 
     <div id="main-content" class="screen">
-        <h1 class="main-title">Una Galaxia de Amor para Ti</h1>
-        
-        <img src="IMG-20260621-WA0010.jpg" alt="Mi hermosa abuelita" class="foto-abuelita" onerror="this.style.opacity='0'">
-
+        <img src="IMG-20260621-WA0010.jpg" alt="Abuelita" class="foto-abuelita">
         <div class="message-text">
-            <p>Abuelita, vivir contigo todos los días es el regalo más grande que la vida me ha dado. Despertar en la misma casa, compartir nuestras charlas, tus cuidados y esa calidez que solo tú tienes, hace que mi mundo sea mejor.</p>
-            <p>Gracias por ser mi guía, mi refugio y mi mayor ejemplo. En esta galaxia inmensa, tú eres mi estrella favorita.</p>
-            <p>¡Te amo con todo mi corazón!</p>
+            <div id="typed-message"></div>
         </div>
-
-        <button id="btn-view-world">Nuestro mundo 💓💓</button>
+        <button id="btn-final">Ver Galaxia 🌌</button>
     </div>
 
-    <audio id="musica-fondo" loop preload="auto">
-        <source src="cancion.mp4" type="audio/mpeg">
+    <audio id="musica-fondo" loop playsinline>
+        <source src="cancion.mp4" type="audio/mp4">
     </audio>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // === 1. UNIVERSO 3D (RENDIMIENTO ALTO) ===
-        const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2('#02000a', 0.05); 
-
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+        /* --- LÓGICA DE ESCRITURA (Efecto Typewriter) --- */
+        const mensajeCompleto = "Abuelita hermosa, vivir contigo cada día es un regalo. Gracias por enseñarme tanto, por cuidarme y por ser mi guía. En esta galaxia inmensa, tú eres la estrella que más brilla. ¡Te amo con todo mi corazón!";
         
-        const isMobile = window.innerWidth < 768;
-        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !isMobile, powerPreference: "high-performance" });
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); 
+        async function escribirMensaje() {
+            const contenedor = document.getElementById('typed-message');
+            for (let letra of mensajeCompleto) {
+                contenedor.innerHTML += letra;
+                await new Promise(r => setTimeout(r, 40)); // Velocidad de escritura
+            }
+        }
+
+        /* --- LÓGICA DE NAVEGACIÓN Y AUDIO --- */
+        const btnEntrar = document.getElementById('btn-entrar');
+        const introScreen = document.getElementById('intro-screen');
+        const mainContent = document.getElementById('main-content');
+        const musica = document.getElementById('musica-fondo');
+
+        btnEntrar.addEventListener('click', () => {
+            // Iniciar Audio
+            musica.play().catch(e => console.log("Audio esperando interacción"));
+            
+            // Animación pantalla
+            introScreen.style.opacity = '0';
+            setTimeout(() => {
+                introScreen.style.display = 'none';
+                mainContent.style.display = 'flex';
+                requestAnimationFrame(() => {
+                    mainContent.style.opacity = '1';
+                    mainContent.classList.add('active');
+                    escribirMensaje(); // Iniciar efecto escritura
+                });
+            }, 800);
+        });
+
+        /* --- LÓGICA DE ANIMACIÓN 3D (Simplificada para fluidez) --- */
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        const particlesCount = isMobile ? 3000 : 6000;
-        const posArray = new Float32Array(particlesCount * 3);
-        const colorsArray = new Float32Array(particlesCount * 3);
-        const branches = 4; const spin = 1.5;   
-
-        for(let i = 0; i < particlesCount; i++) {
-            const i3 = i * 3;
-            const radius = Math.random() * Math.random() * 8; 
-            const branchAngle = (i % branches) / branches * Math.PI * 2;
-            const spinAngle = radius * spin;
-
-            const randomX = Math.pow(Math.random() - 0.5, 3) * (10 / radius);
-            const randomY = Math.pow(Math.random() - 0.5, 3) * (10 / radius);
-            const randomZ = Math.pow(Math.random() - 0.5, 3) * (10 / radius);
-
-            posArray[i3] = Math.cos(branchAngle + spinAngle) * radius + randomX;
-            posArray[i3+1] = randomY * 0.5; 
-            posArray[i3+2] = Math.sin(branchAngle + spinAngle) * radius + randomZ;
-
-            const mixedColor = new THREE.Color('#ffffff');
-            const endColor = new THREE.Color('#ff1493'); 
-            mixedColor.lerp(endColor, radius / 8);
-
-            colorsArray[i3] = mixedColor.r; colorsArray[i3+1] = mixedColor.g; colorsArray[i3+2] = mixedColor.b;
+        // Geometría
+        const geometry = new THREE.BufferGeometry();
+        const vertices = [];
+        for(let i = 0; i < 3000; i++) {
+            vertices.push((Math.random()-0.5)*20, (Math.random()-0.5)*20, (Math.random()-0.5)*20);
         }
-
-        const galaxyGeo = new THREE.BufferGeometry();
-        galaxyGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        galaxyGeo.setAttribute('color', new THREE.BufferAttribute(colorsArray, 3));
-
-        const galaxyMat = new THREE.PointsMaterial({
-            size: isMobile ? 0.05 : 0.04, 
-            vertexColors: true, blending: THREE.AdditiveBlending,
-            depthWrite: false, transparent: true
-        });
-        const galaxy = new THREE.Points(galaxyGeo, galaxyMat);
-        scene.add(galaxy);
-
-        const starsGeo = new THREE.BufferGeometry();
-        const starsCount = isMobile ? 800 : 2000;
-        const starsPos = new Float32Array(starsCount * 3);
-        for(let i=0; i < starsCount * 3; i++) { starsPos[i] = (Math.random() - 0.5) * 40; }
-        starsGeo.setAttribute('position', new THREE.BufferAttribute(starsPos, 3));
-        const starsMat = new THREE.PointsMaterial({ color: '#ffd1dc', size: 0.02, transparent: true, opacity: 0.5 });
-        const backgroundStars = new THREE.Points(starsGeo, starsMat);
-        scene.add(backgroundStars);
-
-        const clock = new THREE.Clock();
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+        const material = new THREE.PointsMaterial({ color: 0xff69b4, size: 0.05 });
+        const points = new THREE.Points(geometry, material);
+        scene.add(points);
+        camera.position.z = 5;
 
         function animate() {
             requestAnimationFrame(animate);
-            const elapsedTime = clock.getElapsedTime();
-
-            galaxy.rotation.y = elapsedTime * 0.05;
-            backgroundStars.rotation.y = elapsedTime * 0.02;
-
-            camera.position.x = Math.sin(elapsedTime * 0.2) * 4;
-            camera.position.z = 6 + Math.cos(elapsedTime * 0.3) * 2;
-            camera.position.y = 2 + Math.sin(elapsedTime * 0.4) * 1.5;
-            camera.lookAt(galaxy.position);
-
+            points.rotation.y += 0.002;
             renderer.render(scene, camera);
         }
         animate();
-
-        // === 2. LÓGICA DE INTERFAZ A PRUEBA DE FALLOS ===
-        const introScreen = document.getElementById('intro-screen');
-        const mainContent = document.getElementById('main-content');
-        const btnEntrar = document.getElementById('btn-entrar');
-        const btnViewWorld = document.getElementById('btn-view-world');
-        const musicaFondo = document.getElementById('musica-fondo');
-        const decorations = document.getElementById('decorations');
-
-        let isTransitioning = false;
-
-                btnEntrar.addEventListener('click', () => {
-            if (isTransitioning) return;
-            isTransitioning = true;
-            
-            // Texto de carga
-            btnEntrar.innerText = "Cargando... 💖";
-            
-            // FORZADO DE AUDIO
-            const audio = document.getElementById('musica-fondo');
-            audio.muted = false;
-            
-            // Función para intentar reproducir
-            const playAudio = () => {
-                audio.play().then(() => {
-                    console.log("Audio sonando");
-                }).catch(e => {
-                    console.error("Error al reproducir:", e);
-                });
-            };
-
-            playAudio();
-
-            // Transición
-            introScreen.style.opacity = '0'; 
-            setTimeout(() => {
-                introScreen.style.display = 'none';
-                mainContent.style.display = 'flex';
-                requestAnimationFrame(() => {
-                    mainContent.style.opacity = '1';
-                    mainContent.classList.add('active');
-                    isTransitioning = false;
-                });
-            }, 800);
-        });
-        
-            
-            // Feedback visual inmediato
-            btnEntrar.innerText = "Entrando... 💖";
-            btnEntrar.classList.remove('pulse-btn');
-
-            // Forzar inicio de audio
-            try {
-                musicaFondo.volume = 1;
-                let playPromise = musicaFondo.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(error => {
-                        console.warn("Reproducción automática evitada por el navegador.", error);
-                    });
-                }
-            } catch(e) {
-                console.warn("Error en audio:", e);
-            }
-
-            // Iniciar transición visual
-            introScreen.style.opacity = '0'; 
-            
-            setTimeout(() => {
-                introScreen.style.display = 'none';
-                mainContent.style.display = 'flex';
-                
-                requestAnimationFrame(() => {
-                    mainContent.style.opacity = '1';
-                    mainContent.classList.add('active');
-                    isTransitioning = false;
-                });
-            }, 800); // <-- Tiempo reducido para que sea más veloz
-        });
-
-        btnViewWorld.addEventListener('click', () => {
-            mainContent.style.opacity = '0'; 
-            decorations.style.opacity = '0'; 
-            mainContent.classList.remove('active');
-            
-            setTimeout(() => {
-                mainContent.style.display = 'none';
-                decorations.style.display = 'none';
-            }, 800);
-        });
-
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
     </script>
 </body>
 </html>
