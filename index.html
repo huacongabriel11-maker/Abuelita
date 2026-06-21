@@ -19,7 +19,7 @@
             color: white; 
             font-family: 'Arial', sans-serif; 
             overflow: hidden; 
-            touch-action: manipulation; /* Optimiza los toques en móvil */
+            touch-action: manipulation; 
         }
 
         #canvas-container { 
@@ -33,14 +33,14 @@
             transform: translate(-50%, -50%); 
             z-index: 3; text-align: center; 
             width: 90%; max-width: 500px;
-            max-height: 90vh; /* Previene desbordamiento vertical */
+            max-height: 90vh; 
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1); 
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
         }
 
         #main-content {
             display: none; opacity: 0;
-            pointer-events: none; /* Desactiva clics mientras está oculto */
+            pointer-events: none; 
         }
 
         #main-content.active {
@@ -49,7 +49,7 @@
 
         /* --- TIPOGRAFÍA OPTIMIZADA --- */
         h1.intro-title { 
-            font-size: clamp(2rem, 8vw, 3.5rem); /* Tipografía fluida que se adapta sola */
+            font-size: clamp(2rem, 8vw, 3.5rem); 
             text-shadow: 0 0 20px var(--primary-color), 0 0 40px #ff1493; 
             margin-bottom: 30px; 
             animation: glow 2.5s infinite alternate; 
@@ -68,7 +68,7 @@
             padding: 10px 15px;
             border-radius: 12px;
             border: 1px solid rgba(255, 105, 180, 0.2);
-            backdrop-filter: blur(4px); /* Efecto cristal */
+            backdrop-filter: blur(4px); 
             margin-bottom: 20px;
             width: 100%;
             box-sizing: border-box;
@@ -109,7 +109,7 @@
             box-shadow: 0 0 25px var(--primary-glow);
             animation: floatFoto 5s ease-in-out infinite; 
             margin-bottom: 15px;
-            background-color: rgba(255,105,180,0.2); /* Color de fondo por si tarda en cargar */
+            background-color: rgba(255,105,180,0.2); 
         }
 
         /* --- DECORACIONES CSS --- */
@@ -128,7 +128,7 @@
         .heart:nth-child(4) { left: 75%; animation-delay: 1.5s; font-size: 1.5rem; }
         .heart:nth-child(5) { left: 85%; animation-delay: 3.5s; font-size: 1.8rem; }
 
-        /* --- ANIMACIONES HARDWARE-ACCELERATED --- */
+        /* --- ANIMACIONES --- */
         @keyframes glow {
             from { text-shadow: 0 0 10px var(--primary-color); }
             to { text-shadow: 0 0 25px var(--primary-color), 0 0 40px #ff00ff; }
@@ -159,13 +159,13 @@
 
     <div id="intro-screen" class="screen">
         <h1 class="intro-title">¡FELIZ<br>CUMPLEAÑOS!</h1>
-        <button id="btn-entrar" class="pulse-btn" aria-label="Entrar a la sorpresa">Entrar ✨</button>
+        <button id="btn-entrar" class="pulse-btn">Entrar ✨</button>
     </div>
 
     <div id="main-content" class="screen">
         <h1 class="main-title">Una Galaxia de Amor para Ti</h1>
         
-        <img src="foto.jpg" alt="Mi hermosa abuelita" class="foto-abuelita" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'160\' height=\'160\'><rect width=\'160\' height=\'160\' fill=\'#ff69b4\' fill-opacity=\'0.2\'/><text x=\'50%\' y=\'50%\' font-size=\'40\' text-anchor=\'middle\' dominant-baseline=\'middle\'>👵</text></svg>'">
+        <img src="foto.jpg" alt="Mi hermosa abuelita" class="foto-abuelita" onerror="this.style.opacity='0'">
 
         <div class="message-text">
             <p>Abuelita, vivir contigo todos los días es el regalo más grande que la vida me ha dado. Despertar en la misma casa, compartir nuestras charlas, tus cuidados y esa calidez que solo tú tienes, hace que mi mundo sea mejor.</p>
@@ -182,20 +182,18 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // === 1. INGENIERÍA DEL RENDIMIENTO 3D ===
+        // === 1. UNIVERSO 3D (RENDIMIENTO ALTO) ===
         const scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2('#02000a', 0.05); 
 
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
         
-        // Optimización: Desactiva antialiasing en móviles para salvar GPU
         const isMobile = window.innerWidth < 768;
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !isMobile, powerPreference: "high-performance" });
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); 
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        // Optimización: Reducir partículas en móvil a la mitad
         const particlesCount = isMobile ? 3000 : 6000;
         const posArray = new Float32Array(particlesCount * 3);
         const colorsArray = new Float32Array(particlesCount * 3);
@@ -227,14 +225,13 @@
         galaxyGeo.setAttribute('color', new THREE.BufferAttribute(colorsArray, 3));
 
         const galaxyMat = new THREE.PointsMaterial({
-            size: isMobile ? 0.05 : 0.04, // Un poco más grandes en móvil para compensar menor cantidad
+            size: isMobile ? 0.05 : 0.04, 
             vertexColors: true, blending: THREE.AdditiveBlending,
             depthWrite: false, transparent: true
         });
         const galaxy = new THREE.Points(galaxyGeo, galaxyMat);
         scene.add(galaxy);
 
-        // Estrellas de fondo optimizadas
         const starsGeo = new THREE.BufferGeometry();
         const starsCount = isMobile ? 800 : 2000;
         const starsPos = new Float32Array(starsCount * 3);
@@ -262,7 +259,7 @@
         }
         animate();
 
-        // === 2. LÓGICA DE INTERFAZ SEGURA ===
+        // === 2. LÓGICA DE INTERFAZ A PRUEBA DE FALLOS ===
         const introScreen = document.getElementById('intro-screen');
         const mainContent = document.getElementById('main-content');
         const btnEntrar = document.getElementById('btn-entrar');
@@ -270,33 +267,42 @@
         const musicaFondo = document.getElementById('musica-fondo');
         const decorations = document.getElementById('decorations');
 
-        // Previene dobles clics
         let isTransitioning = false;
 
-        btnEntrar.addEventListener('click', async () => {
+        btnEntrar.addEventListener('click', () => {
             if (isTransitioning) return;
             isTransitioning = true;
+            
+            // Feedback visual inmediato
+            btnEntrar.innerText = "Entrando... 💖";
+            btnEntrar.classList.remove('pulse-btn');
 
-            // Manejo robusto de la promesa de audio
+            // Forzar inicio de audio
             try {
-                await musicaFondo.play();
-            } catch (err) {
-                console.warn("El navegador bloqueó el autoplay o el archivo no existe:", err);
+                musicaFondo.volume = 1;
+                let playPromise = musicaFondo.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.warn("Reproducción automática evitada por el navegador.", error);
+                    });
+                }
+            } catch(e) {
+                console.warn("Error en audio:", e);
             }
 
+            // Iniciar transición visual
             introScreen.style.opacity = '0'; 
             
             setTimeout(() => {
                 introScreen.style.display = 'none';
                 mainContent.style.display = 'flex';
                 
-                // Forzar un repintado antes de cambiar la opacidad
                 requestAnimationFrame(() => {
                     mainContent.style.opacity = '1';
                     mainContent.classList.add('active');
                     isTransitioning = false;
                 });
-            }, 1200);
+            }, 800); // <-- Tiempo reducido para que sea más veloz
         });
 
         btnViewWorld.addEventListener('click', () => {
@@ -307,10 +313,9 @@
             setTimeout(() => {
                 mainContent.style.display = 'none';
                 decorations.style.display = 'none';
-            }, 1200);
+            }, 800);
         });
 
-        // Resize seguro con "Debounce" implícito
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
