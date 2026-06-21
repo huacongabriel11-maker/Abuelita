@@ -4,15 +4,171 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Feliz Cumpleaños Abuelita</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100%; 
+            background-color: #02000a; /* Fondo aún más oscuro para resaltar el brillo */
+            color: white; 
+            font-family: 'Arial', sans-serif; 
+            overflow: hidden; 
+        }
+        #canvas-container { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            z-index: 1; 
+        }
+        
+        /* Contenedores de las pantallas */
+        .screen { 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            z-index: 3; 
+            text-align: center; 
+            width: 90%; 
+            transition: opacity 1.5s ease-in-out; 
+        }
+        
+        #main-content {
+            display: none; 
+            opacity: 0;
+        }
+
+        /* Títulos */
+        h1.intro-title { 
+            font-size: 3.5rem; 
+            text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff1493; 
+            margin-bottom: 30px; 
+            animation: glow 2s infinite alternate; 
+        }
+        h1.main-title { 
+            font-size: 2rem; 
+            text-shadow: 0 0 15px #ff69b4; 
+            margin-bottom: 20px; 
+        }
+
+        /* Texto de la carta */
+        .message-text p { 
+            font-size: 1.05rem; 
+            letter-spacing: 0.5px; 
+            line-height: 1.5;
+            margin-bottom: 15px; 
+            color: #ffd1dc;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            text-shadow: 0 0 8px rgba(0,0,0,1);
+            background: rgba(0, 0, 0, 0.3); /* Un fondo sutil para que el texto se lea perfecto sobre la galaxia */
+            padding: 5px 10px;
+            border-radius: 10px;
+        }
+
+        /* Botones generales */
+        button { 
+            background: rgba(255, 105, 180, 0.2); 
+            border: 2px solid #ff69b4; 
+            color: #ff69b4; 
+            padding: 15px 35px; 
+            border-radius: 40px; 
+            font-size: 1.2rem; 
+            font-weight: bold;
+            cursor: pointer; 
+            transition: all 0.3s; 
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 15px rgba(255,105,180,0.5); 
+            margin-top: 15px;
+        }
+        button:hover { 
+            background: #ff69b4; 
+            color: white; 
+            box-shadow: 0 0 25px rgba(255,105,180,0.9);
+            transform: scale(1.05);
+        }
+        
+        .pulse-btn {
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Foto de la abuelita */
+        .foto-abuelita {
+            display: block; 
+            margin: 0 auto 20px; 
+            width: 170px; 
+            height: 170px; 
+            object-fit: cover; 
+            border-radius: 50%; 
+            border: 4px solid #ff69b4; 
+            box-shadow: 0 0 30px rgba(255,105,180,0.8);
+            animation: floatFoto 4s ease-in-out infinite; 
+        }
+
+        /* Corazones flotantes CSS */
+        .decorations {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 2;
+        }
+        .heart {
+            position: absolute;
+            color: #ff69b4;
+            font-size: 1.5rem;
+            opacity: 0;
+            animation: floatUp 6s linear infinite;
+        }
+        .heart:nth-child(1) { left: 10%; animation-delay: 0s; font-size: 2rem; }
+        .heart:nth-child(2) { left: 30%; animation-delay: 2s; font-size: 1.2rem; }
+        .heart:nth-child(3) { left: 50%; animation-delay: 4s; font-size: 2.5rem; }
+        .heart:nth-child(4) { left: 75%; animation-delay: 1s; font-size: 1.8rem; }
+        .heart:nth-child(5) { left: 85%; animation-delay: 3s; font-size: 2rem; }
+
+        /* Animaciones */
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ff69b4, 0 0 20px #ff1493; }
+            to { text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff1493, 0 0 60px #ff00ff; }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 15px rgba(255,105,180,0.5); }
+            50% { transform: scale(1.05); box-shadow: 0 0 25px rgba(255,105,180,0.9); }
+            100% { transform: scale(1); box-shadow: 0 0 15px rgba(255,105,180,0.5); }
+        }
+        @keyframes floatFoto {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 1; text-shadow: 0 0 10px #ff69b4; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; text-shadow: 0 0 20px #ff69b4; }
+        }
+    </style>
 </head>
 <body>
     <div id="canvas-container"></div>
 
-    <div class="ui-layer">
-        <h1>Una Galaxia de Amor para Ti</h1>
+    <div class="decorations">
+        <div class="heart">💖</div>
+        <div class="heart">✨</div>
+        <div class="heart">💖</div>
+        <div class="heart">💓</div>
+        <div class="heart">✨</div>
+    </div>
+
+    <div id="intro-screen" class="screen">
+        <h1 class="intro-title">¡FELIZ<br>CUMPLEAÑOS!</h1>
+        <button id="btn-entrar" class="pulse-btn">Entrar ✨</button>
+    </div>
+
+    <div id="main-content" class="screen">
+        <h1 class="main-title">Una Galaxia de Amor para Ti</h1>
         
-        <img src="PON_AQUI_LA_FOTO_DE_TU_ABUELITA.jpg" alt="Foto de tu abuelita" style="display: block; margin: 0 auto 20px; max-width: 150px; border-radius: 50%; box-shadow: 0 0 15px rgba(255,105,180,0.5);">
+        <img src="44631.jpg" alt="Foto de mi hermosa abuelita" class="foto-abuelita">
 
         <div class="message-text">
             <p>Abuelita, vivir contigo todos los días es el regalo más grande que la vida me ha dado. Despertar en la misma casa, compartir nuestras charlas, tus cuidados y esa calidez que solo tú tienes, hace que mi mundo sea mejor.</p>
@@ -23,8 +179,143 @@
         <button id="btn-view-world">Nuestro mundo 💓💓</button>
     </div>
 
+    <audio id="musica-fondo" loop>
+        <source src="45233.mp4" type="audio/mp4">
+    </audio>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="script.js"></script>
+    <script>
+        // --- 1. CONFIGURACIÓN 3D FLUIDA Y OPTIMIZADA ---
+        const scene = new THREE.Scene();
+        // Añadimos niebla para dar profundidad infinita
+        scene.fog = new THREE.FogExp2('#02000a', 0.05); 
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
+        renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1); // Más nítido
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        // A. CAPA 1: La Galaxia Principal en Espiral
+        const particlesCount = 6000;
+        const posArray = new Float32Array(particlesCount * 3);
+        const colorsArray = new Float32Array(particlesCount * 3);
+
+        const branches = 4; // Brazos de la espiral
+        const spin = 1.5;   // Curvatura de la espiral
+
+        for(let i = 0; i < particlesCount; i++) {
+            const i3 = i * 3;
+            // Concentrar más partículas en el centro
+            const radius = Math.random() * Math.random() * 8; 
+            const branchAngle = (i % branches) / branches * Math.PI * 2;
+            const spinAngle = radius * spin;
+
+            // Dispersión suave para que parezca polvo estelar
+            const randomX = Math.pow(Math.random() - 0.5, 3) * (10 / radius);
+            const randomY = Math.pow(Math.random() - 0.5, 3) * (10 / radius);
+            const randomZ = Math.pow(Math.random() - 0.5, 3) * (10 / radius);
+
+            posArray[i3] = Math.cos(branchAngle + spinAngle) * radius + randomX;
+            posArray[i3+1] = randomY * 0.5; // Galaxia aplanada pero con volumen
+            posArray[i3+2] = Math.sin(branchAngle + spinAngle) * radius + randomZ;
+
+            // Colores: Transición de centro brillante (blanco/fucsia) a bordes oscuros (morado)
+            const mixedColor = new THREE.Color('#ffffff');
+            const endColor = new THREE.Color('#ff1493'); // Rosa profundo
+            mixedColor.lerp(endColor, radius / 8);
+
+            colorsArray[i3] = mixedColor.r;
+            colorsArray[i3+1] = mixedColor.g;
+            colorsArray[i3+2] = mixedColor.b;
+        }
+
+        const galaxyGeo = new THREE.BufferGeometry();
+        galaxyGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        galaxyGeo.setAttribute('color', new THREE.BufferAttribute(colorsArray, 3));
+
+        const galaxyMat = new THREE.PointsMaterial({
+            size: 0.04,
+            vertexColors: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false, // Mejora el rendimiento de superposición
+            transparent: true
+        });
+        const galaxy = new THREE.Points(galaxyGeo, galaxyMat);
+        scene.add(galaxy);
+
+        // B. CAPA 2: Estrellas de fondo para el efecto 3D Parallax
+        const starsGeo = new THREE.BufferGeometry();
+        const starsCount = 2000;
+        const starsPos = new Float32Array(starsCount * 3);
+        for(let i=0; i < starsCount * 3; i++) {
+            starsPos[i] = (Math.random() - 0.5) * 40; // Esparcidas muy lejos
+        }
+        starsGeo.setAttribute('position', new THREE.BufferAttribute(starsPos, 3));
+        const starsMat = new THREE.PointsMaterial({
+            color: '#ffd1dc', size: 0.02, transparent: true, opacity: 0.6
+        });
+        const backgroundStars = new THREE.Points(starsGeo, starsMat);
+        scene.add(backgroundStars);
+
+        // Reloj para movimiento ultra fluido sin importar la velocidad del celular
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+
+            // Rotación suave e independiente
+            galaxy.rotation.y = elapsedTime * 0.05;
+            backgroundStars.rotation.y = elapsedTime * 0.02;
+            backgroundStars.rotation.x = elapsedTime * 0.01;
+
+            // MAGIA 3D: Cámara Flotante
+            // Hace que viaje a través del espacio y orbite de forma natural
+            camera.position.x = Math.sin(elapsedTime * 0.2) * 4;
+            camera.position.z = 6 + Math.cos(elapsedTime * 0.3) * 2;
+            camera.position.y = 2 + Math.sin(elapsedTime * 0.4) * 1.5;
+            camera.lookAt(galaxy.position);
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // --- 2. LÓGICA DE PANTALLAS ---
+        const introScreen = document.getElementById('intro-screen');
+        const mainContent = document.getElementById('main-content');
+        const btnEntrar = document.getElementById('btn-entrar');
+        const btnViewWorld = document.getElementById('btn-view-world');
+        const musicaFondo = document.getElementById('musica-fondo');
+        const decorations = document.querySelector('.decorations');
+
+        btnEntrar.addEventListener('click', () => {
+            musicaFondo.play();
+            introScreen.style.opacity = '0'; 
+            
+            setTimeout(() => {
+                introScreen.style.display = 'none';
+                mainContent.style.display = 'block';
+                
+                setTimeout(() => {
+                    mainContent.style.opacity = '1';
+                }, 50);
+            }, 1000);
+        });
+
+        btnViewWorld.addEventListener('click', () => {
+            mainContent.style.opacity = '0'; 
+            decorations.style.opacity = '0'; // Ocultamos los corazones de CSS también
+            setTimeout(() => {
+                mainContent.style.display = 'none';
+            }, 1500);
+        });
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
 </body>
 </html>
-
