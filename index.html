@@ -2,173 +2,170 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Feliz Cumpleaños Abuelita</title>
     <style>
+        /* --- ARQUITECTURA CSS BASE --- */
+        :root {
+            --primary-color: #ff69b4;
+            --primary-glow: rgba(255, 105, 180, 0.8);
+            --bg-color: #02000a;
+        }
+
         body, html { 
-            margin: 0; 
-            padding: 0; 
-            width: 100%; 
-            height: 100%; 
-            background-color: #02000a; /* Fondo aún más oscuro para resaltar el brillo */
+            margin: 0; padding: 0; 
+            width: 100%; height: 100%; 
+            background-color: var(--bg-color); 
             color: white; 
             font-family: 'Arial', sans-serif; 
             overflow: hidden; 
+            touch-action: manipulation; /* Optimiza los toques en móvil */
         }
+
         #canvas-container { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            z-index: 1; 
+            position: absolute; top: 0; left: 0; 
+            width: 100%; height: 100%; z-index: 1; 
         }
         
-        /* Contenedores de las pantallas */
+        /* --- PANTALLAS Y CONTENEDORES --- */
         .screen { 
-            position: absolute; 
-            top: 50%; 
-            left: 50%; 
+            position: absolute; top: 50%; left: 50%; 
             transform: translate(-50%, -50%); 
-            z-index: 3; 
-            text-align: center; 
-            width: 90%; 
-            transition: opacity 1.5s ease-in-out; 
+            z-index: 3; text-align: center; 
+            width: 90%; max-width: 500px;
+            max-height: 90vh; /* Previene desbordamiento vertical */
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1); 
         }
-        
+
         #main-content {
-            display: none; 
-            opacity: 0;
+            display: none; opacity: 0;
+            pointer-events: none; /* Desactiva clics mientras está oculto */
         }
 
-        /* Títulos */
+        #main-content.active {
+            pointer-events: auto;
+        }
+
+        /* --- TIPOGRAFÍA OPTIMIZADA --- */
         h1.intro-title { 
-            font-size: 3.5rem; 
-            text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff1493; 
+            font-size: clamp(2rem, 8vw, 3.5rem); /* Tipografía fluida que se adapta sola */
+            text-shadow: 0 0 20px var(--primary-color), 0 0 40px #ff1493; 
             margin-bottom: 30px; 
-            animation: glow 2s infinite alternate; 
-        }
-        h1.main-title { 
-            font-size: 2rem; 
-            text-shadow: 0 0 15px #ff69b4; 
-            margin-bottom: 20px; 
-        }
-
-        /* Texto de la carta */
-        .message-text p { 
-            font-size: 1.05rem; 
-            letter-spacing: 0.5px; 
-            line-height: 1.5;
-            margin-bottom: 15px; 
-            color: #ffd1dc;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            text-shadow: 0 0 8px rgba(0,0,0,1);
-            background: rgba(0, 0, 0, 0.3); /* Un fondo sutil para que el texto se lea perfecto sobre la galaxia */
-            padding: 5px 10px;
-            border-radius: 10px;
-        }
-
-        /* Botones generales */
-        button { 
-            background: rgba(255, 105, 180, 0.2); 
-            border: 2px solid #ff69b4; 
-            color: #ff69b4; 
-            padding: 15px 35px; 
-            border-radius: 40px; 
-            font-size: 1.2rem; 
-            font-weight: bold;
-            cursor: pointer; 
-            transition: all 0.3s; 
-            backdrop-filter: blur(5px);
-            box-shadow: 0 0 15px rgba(255,105,180,0.5); 
-            margin-top: 15px;
-        }
-        button:hover { 
-            background: #ff69b4; 
-            color: white; 
-            box-shadow: 0 0 25px rgba(255,105,180,0.9);
-            transform: scale(1.05);
+            animation: glow 2.5s infinite alternate; 
+            line-height: 1.2;
+            margin-top: 0;
         }
         
-        .pulse-btn {
-            animation: pulse 1.5s infinite;
+        h1.main-title { 
+            font-size: clamp(1.5rem, 5vw, 2rem); 
+            text-shadow: 0 0 15px var(--primary-color); 
+            margin-bottom: 15px; 
         }
 
-        /* Foto de la abuelita */
+        .message-text {
+            background: rgba(0, 0, 0, 0.45); 
+            padding: 10px 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 105, 180, 0.2);
+            backdrop-filter: blur(4px); /* Efecto cristal */
+            margin-bottom: 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .message-text p { 
+            font-size: clamp(0.95rem, 3.5vw, 1.1rem); 
+            letter-spacing: 0.3px; line-height: 1.5;
+            margin: 0 0 12px 0; color: #ffd1dc;
+            text-shadow: 0 2px 4px rgba(0,0,0,1);
+        }
+        .message-text p:last-child { margin-bottom: 0; }
+
+        /* --- UI ELEMENTS --- */
+        button { 
+            background: rgba(255, 105, 180, 0.15); 
+            border: 2px solid var(--primary-color); 
+            color: var(--primary-color); 
+            padding: 14px 32px; 
+            border-radius: 40px; 
+            font-size: 1.1rem; font-weight: bold;
+            cursor: pointer; transition: all 0.3s ease; 
+            box-shadow: 0 0 15px rgba(255,105,180,0.4); 
+            -webkit-tap-highlight-color: transparent; 
+            outline: none;
+        }
+        button:active { transform: scale(0.95); }
+
+        .pulse-btn { animation: pulse 2s infinite; }
+
         .foto-abuelita {
             display: block; 
-            margin: 0 auto 20px; 
-            width: 170px; 
-            height: 170px; 
+            width: clamp(120px, 40vw, 160px); 
+            height: clamp(120px, 40vw, 160px); 
             object-fit: cover; 
             border-radius: 50%; 
-            border: 4px solid #ff69b4; 
-            box-shadow: 0 0 30px rgba(255,105,180,0.8);
-            animation: floatFoto 4s ease-in-out infinite; 
+            border: 3px solid var(--primary-color); 
+            box-shadow: 0 0 25px var(--primary-glow);
+            animation: floatFoto 5s ease-in-out infinite; 
+            margin-bottom: 15px;
+            background-color: rgba(255,105,180,0.2); /* Color de fondo por si tarda en cargar */
         }
 
-        /* Corazones flotantes CSS */
+        /* --- DECORACIONES CSS --- */
         .decorations {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 2;
+            transition: opacity 1.5s ease;
         }
         .heart {
-            position: absolute;
-            color: #ff69b4;
-            font-size: 1.5rem;
-            opacity: 0;
-            animation: floatUp 6s linear infinite;
+            position: absolute; color: var(--primary-color);
+            opacity: 0; animation: floatUp 7s linear infinite;
         }
-        .heart:nth-child(1) { left: 10%; animation-delay: 0s; font-size: 2rem; }
-        .heart:nth-child(2) { left: 30%; animation-delay: 2s; font-size: 1.2rem; }
-        .heart:nth-child(3) { left: 50%; animation-delay: 4s; font-size: 2.5rem; }
-        .heart:nth-child(4) { left: 75%; animation-delay: 1s; font-size: 1.8rem; }
-        .heart:nth-child(5) { left: 85%; animation-delay: 3s; font-size: 2rem; }
+        .heart:nth-child(1) { left: 15%; animation-delay: 0s; font-size: 2rem; }
+        .heart:nth-child(2) { left: 35%; animation-delay: 2s; font-size: 1.2rem; }
+        .heart:nth-child(3) { left: 55%; animation-delay: 4s; font-size: 2.2rem; }
+        .heart:nth-child(4) { left: 75%; animation-delay: 1.5s; font-size: 1.5rem; }
+        .heart:nth-child(5) { left: 85%; animation-delay: 3.5s; font-size: 1.8rem; }
 
-        /* Animaciones */
+        /* --- ANIMACIONES HARDWARE-ACCELERATED --- */
         @keyframes glow {
-            from { text-shadow: 0 0 10px #ff69b4, 0 0 20px #ff1493; }
-            to { text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff1493, 0 0 60px #ff00ff; }
+            from { text-shadow: 0 0 10px var(--primary-color); }
+            to { text-shadow: 0 0 25px var(--primary-color), 0 0 40px #ff00ff; }
         }
         @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 15px rgba(255,105,180,0.5); }
-            50% { transform: scale(1.05); box-shadow: 0 0 25px rgba(255,105,180,0.9); }
-            100% { transform: scale(1); box-shadow: 0 0 15px rgba(255,105,180,0.5); }
+            0% { transform: scale(1); box-shadow: 0 0 15px rgba(255,105,180,0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 25px rgba(255,105,180,0.8); }
+            100% { transform: scale(1); box-shadow: 0 0 15px rgba(255,105,180,0.4); }
         }
         @keyframes floatFoto {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
         }
         @keyframes floatUp {
-            0% { transform: translateY(100vh) scale(0.5); opacity: 1; text-shadow: 0 0 10px #ff69b4; }
-            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; text-shadow: 0 0 20px #ff69b4; }
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            10% { opacity: 1; text-shadow: 0 0 10px var(--primary-color); }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; text-shadow: 0 0 20px var(--primary-color); }
         }
     </style>
 </head>
 <body>
     <div id="canvas-container"></div>
 
-    <div class="decorations">
-        <div class="heart">💖</div>
-        <div class="heart">✨</div>
-        <div class="heart">💖</div>
-        <div class="heart">💓</div>
-        <div class="heart">✨</div>
+    <div class="decorations" id="decorations">
+        <div class="heart">💖</div><div class="heart">✨</div><div class="heart">💖</div><div class="heart">💓</div><div class="heart">✨</div>
     </div>
 
     <div id="intro-screen" class="screen">
         <h1 class="intro-title">¡FELIZ<br>CUMPLEAÑOS!</h1>
-        <button id="btn-entrar" class="pulse-btn">Entrar ✨</button>
+        <button id="btn-entrar" class="pulse-btn" aria-label="Entrar a la sorpresa">Entrar ✨</button>
     </div>
 
     <div id="main-content" class="screen">
         <h1 class="main-title">Una Galaxia de Amor para Ti</h1>
         
-        <img src="44631.jpg" alt="Foto de mi hermosa abuelita" class="foto-abuelita">
+        <img src="foto.jpg" alt="Mi hermosa abuelita" class="foto-abuelita" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'160\' height=\'160\'><rect width=\'160\' height=\'160\' fill=\'#ff69b4\' fill-opacity=\'0.2\'/><text x=\'50%\' y=\'50%\' font-size=\'40\' text-anchor=\'middle\' dominant-baseline=\'middle\'>👵</text></svg>'">
 
         <div class="message-text">
             <p>Abuelita, vivir contigo todos los días es el regalo más grande que la vida me ha dado. Despertar en la misma casa, compartir nuestras charlas, tus cuidados y esa calidez que solo tú tienes, hace que mi mundo sea mejor.</p>
@@ -179,55 +176,50 @@
         <button id="btn-view-world">Nuestro mundo 💓💓</button>
     </div>
 
-    <audio id="musica-fondo" loop>
-        <source src="45233.mp4" type="audio/mp4">
+    <audio id="musica-fondo" loop preload="auto">
+        <source src="cancion.mp3" type="audio/mpeg">
     </audio>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // --- 1. CONFIGURACIÓN 3D FLUIDA Y OPTIMIZADA ---
+        // === 1. INGENIERÍA DEL RENDIMIENTO 3D ===
         const scene = new THREE.Scene();
-        // Añadimos niebla para dar profundidad infinita
         scene.fog = new THREE.FogExp2('#02000a', 0.05); 
 
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
-        renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1); // Más nítido
+        
+        // Optimización: Desactiva antialiasing en móviles para salvar GPU
+        const isMobile = window.innerWidth < 768;
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !isMobile, powerPreference: "high-performance" });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); 
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        // A. CAPA 1: La Galaxia Principal en Espiral
-        const particlesCount = 6000;
+        // Optimización: Reducir partículas en móvil a la mitad
+        const particlesCount = isMobile ? 3000 : 6000;
         const posArray = new Float32Array(particlesCount * 3);
         const colorsArray = new Float32Array(particlesCount * 3);
-
-        const branches = 4; // Brazos de la espiral
-        const spin = 1.5;   // Curvatura de la espiral
+        const branches = 4; const spin = 1.5;   
 
         for(let i = 0; i < particlesCount; i++) {
             const i3 = i * 3;
-            // Concentrar más partículas en el centro
             const radius = Math.random() * Math.random() * 8; 
             const branchAngle = (i % branches) / branches * Math.PI * 2;
             const spinAngle = radius * spin;
 
-            // Dispersión suave para que parezca polvo estelar
             const randomX = Math.pow(Math.random() - 0.5, 3) * (10 / radius);
             const randomY = Math.pow(Math.random() - 0.5, 3) * (10 / radius);
             const randomZ = Math.pow(Math.random() - 0.5, 3) * (10 / radius);
 
             posArray[i3] = Math.cos(branchAngle + spinAngle) * radius + randomX;
-            posArray[i3+1] = randomY * 0.5; // Galaxia aplanada pero con volumen
+            posArray[i3+1] = randomY * 0.5; 
             posArray[i3+2] = Math.sin(branchAngle + spinAngle) * radius + randomZ;
 
-            // Colores: Transición de centro brillante (blanco/fucsia) a bordes oscuros (morado)
             const mixedColor = new THREE.Color('#ffffff');
-            const endColor = new THREE.Color('#ff1493'); // Rosa profundo
+            const endColor = new THREE.Color('#ff1493'); 
             mixedColor.lerp(endColor, radius / 8);
 
-            colorsArray[i3] = mixedColor.r;
-            colorsArray[i3+1] = mixedColor.g;
-            colorsArray[i3+2] = mixedColor.b;
+            colorsArray[i3] = mixedColor.r; colorsArray[i3+1] = mixedColor.g; colorsArray[i3+2] = mixedColor.b;
         }
 
         const galaxyGeo = new THREE.BufferGeometry();
@@ -235,43 +227,32 @@
         galaxyGeo.setAttribute('color', new THREE.BufferAttribute(colorsArray, 3));
 
         const galaxyMat = new THREE.PointsMaterial({
-            size: 0.04,
-            vertexColors: true,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false, // Mejora el rendimiento de superposición
-            transparent: true
+            size: isMobile ? 0.05 : 0.04, // Un poco más grandes en móvil para compensar menor cantidad
+            vertexColors: true, blending: THREE.AdditiveBlending,
+            depthWrite: false, transparent: true
         });
         const galaxy = new THREE.Points(galaxyGeo, galaxyMat);
         scene.add(galaxy);
 
-        // B. CAPA 2: Estrellas de fondo para el efecto 3D Parallax
+        // Estrellas de fondo optimizadas
         const starsGeo = new THREE.BufferGeometry();
-        const starsCount = 2000;
+        const starsCount = isMobile ? 800 : 2000;
         const starsPos = new Float32Array(starsCount * 3);
-        for(let i=0; i < starsCount * 3; i++) {
-            starsPos[i] = (Math.random() - 0.5) * 40; // Esparcidas muy lejos
-        }
+        for(let i=0; i < starsCount * 3; i++) { starsPos[i] = (Math.random() - 0.5) * 40; }
         starsGeo.setAttribute('position', new THREE.BufferAttribute(starsPos, 3));
-        const starsMat = new THREE.PointsMaterial({
-            color: '#ffd1dc', size: 0.02, transparent: true, opacity: 0.6
-        });
+        const starsMat = new THREE.PointsMaterial({ color: '#ffd1dc', size: 0.02, transparent: true, opacity: 0.5 });
         const backgroundStars = new THREE.Points(starsGeo, starsMat);
         scene.add(backgroundStars);
 
-        // Reloj para movimiento ultra fluido sin importar la velocidad del celular
         const clock = new THREE.Clock();
 
         function animate() {
             requestAnimationFrame(animate);
             const elapsedTime = clock.getElapsedTime();
 
-            // Rotación suave e independiente
             galaxy.rotation.y = elapsedTime * 0.05;
             backgroundStars.rotation.y = elapsedTime * 0.02;
-            backgroundStars.rotation.x = elapsedTime * 0.01;
 
-            // MAGIA 3D: Cámara Flotante
-            // Hace que viaje a través del espacio y orbite de forma natural
             camera.position.x = Math.sin(elapsedTime * 0.2) * 4;
             camera.position.z = 6 + Math.cos(elapsedTime * 0.3) * 2;
             camera.position.y = 2 + Math.sin(elapsedTime * 0.4) * 1.5;
@@ -281,36 +262,55 @@
         }
         animate();
 
-        // --- 2. LÓGICA DE PANTALLAS ---
+        // === 2. LÓGICA DE INTERFAZ SEGURA ===
         const introScreen = document.getElementById('intro-screen');
         const mainContent = document.getElementById('main-content');
         const btnEntrar = document.getElementById('btn-entrar');
         const btnViewWorld = document.getElementById('btn-view-world');
         const musicaFondo = document.getElementById('musica-fondo');
-        const decorations = document.querySelector('.decorations');
+        const decorations = document.getElementById('decorations');
 
-        btnEntrar.addEventListener('click', () => {
-            musicaFondo.play();
+        // Previene dobles clics
+        let isTransitioning = false;
+
+        btnEntrar.addEventListener('click', async () => {
+            if (isTransitioning) return;
+            isTransitioning = true;
+
+            // Manejo robusto de la promesa de audio
+            try {
+                await musicaFondo.play();
+            } catch (err) {
+                console.warn("El navegador bloqueó el autoplay o el archivo no existe:", err);
+            }
+
             introScreen.style.opacity = '0'; 
             
             setTimeout(() => {
                 introScreen.style.display = 'none';
-                mainContent.style.display = 'block';
+                mainContent.style.display = 'flex';
                 
-                setTimeout(() => {
+                // Forzar un repintado antes de cambiar la opacidad
+                requestAnimationFrame(() => {
                     mainContent.style.opacity = '1';
-                }, 50);
-            }, 1000);
+                    mainContent.classList.add('active');
+                    isTransitioning = false;
+                });
+            }, 1200);
         });
 
         btnViewWorld.addEventListener('click', () => {
             mainContent.style.opacity = '0'; 
-            decorations.style.opacity = '0'; // Ocultamos los corazones de CSS también
+            decorations.style.opacity = '0'; 
+            mainContent.classList.remove('active');
+            
             setTimeout(() => {
                 mainContent.style.display = 'none';
-            }, 1500);
+                decorations.style.display = 'none';
+            }, 1200);
         });
 
+        // Resize seguro con "Debounce" implícito
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
